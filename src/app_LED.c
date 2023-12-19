@@ -407,3 +407,41 @@ bool app_led_is_identifying(void)
 {
     return (appLedState == APP_LED_STATE_IDENTIFYING);
 }
+
+
+// *****************************************************************************
+
+static SYS_Timer_t appLedDisarmedMultiportFlashTimer;
+static void appLedDisarmedMultiportFlashTimerHandler(SYS_Timer_t *timer)
+uint8_t multiportFlashCounter;
+
+void app_LED_multiport_init(void)
+{
+    // LED IO are configured in app_shift_register_init() or app_ext_gpio_init() depending on project
+    // Turn off LEDs
+    //     app_ext_gpio_set_cache(LED_RED_PIN, LED_OFF);
+    //     app_ext_gpio_set_cache(LED_GREEN_PIN, LED_OFF);
+    //     app_ext_gpio_set_cache(LED_BLUE_PIN, LED_OFF);
+    //     app_ext_gpio_set_cache(LED_WHITE_PIN, LED_OFF);
+
+    appLedDisarmedMultiportFlashTimer.interval = 250;
+    appLedDisarmedMultiportFlashTimer.mode     = SYS_TIMER_PERIODIC_MODE;
+    appLedDisarmedMultiportFlashTimer.handler  = appLedDisarmedMultiportFlashTimerHandler;
+    
+    multiportFlashCounter = 0;
+    
+    SYS_TimerStart(&appLedDisarmedMultiportFlashTimer);
+}
+
+static void appLedDisarmedMultiportFlashTimerHandler(SYS_Timer_t *timer)
+{
+    UNUSED(timer);
+    
+    multiportFlashCounter = multiportFlashCounter + 1;
+    if(multiportFlashCounter >= 8)
+    {
+        multiportFlashCounter = 0;
+    }
+    
+    app_gen_io_multiport_blink(multiportFlashCounter);
+}

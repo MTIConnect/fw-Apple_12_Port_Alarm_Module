@@ -1004,3 +1004,32 @@ bool app_gen_io_is_port_alarming(uint8_t portNum)
 {
     return Channel[portNum].portStat.alarming;
 }
+
+
+void app_gen_io_multiport_blink(uint8_t multiportFlashCounter)
+{
+    for(int num = 0 ; num < CH_COUNT ; num++)
+    {
+        if(PORT_DISARMED == Channel[num].portStat.armed)
+        {
+            if((multiportFlashCounter == 5) || (multiportFlashCounter == 7))
+            {
+                // Reconfigure pin to be output
+                // Turn off Disarmed Channel's LED
+                
+            }  
+            else
+            {
+                // Turn on Disarmed Channel's LED
+                // Change to input & measure level to see if a cable is plugged in
+                // If there is a cable plugged in Call Debounce function
+            }              
+        }
+    }  
+}
+
+void app_gen_io_multiport_reconfigIO(uint8_t gpioDirection)
+{
+    struct port_config pin_conf;
+    port_get_config_defaults(&pin_conf);
+}
